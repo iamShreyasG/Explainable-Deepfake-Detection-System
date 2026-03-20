@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #faf7ef;
+    font-family: 'Georgia', serif;
+    color: #3a2e2d;
+    text-align: center;
+}
+
+.container {
+    margin-top: 120px;
+}
+
+.logo {
+    position: relative;
+    font-size: 34px;
+    font-weight: bold;
+    color: #a5531c;
+    width: 230px;
+    height: 170px;
+    margin: 0 auto 40px auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo::before {
+    content: "";
+    position: absolute;
+    width: 235px;
+    height: 170px;
+
+    border: 3px solid #a5531c;
+    border-radius: 50%;
+
+    top: -10px;      /* ← Move ONLY the circle */
+    left: -7px;
+    right: 0;
+    margin: auto;
+}
+
+
+
+
+.title {
+    font-size: 58px;
+    font-style: italic;
+    margin: 0;
+}
+
+.highlight {
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 3px solid black;
+    padding: 0 6px;
+}
+
+.subtitle {
+    margin-top: 20px;
+    font-size: 20px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+    color: #444;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 35px;
+    padding: 12px 28px;
+    background: #a5531c;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #8a4416;
+    transform: translateY(-2px);
+}
+
+.footer {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-style: italic;
+    font-size: 15px;
+    color: #8a4416;    /* perfect warm accent, matches the theme */
+    letter-spacing: 1px;
+}

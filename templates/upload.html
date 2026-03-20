@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Video</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+</head>
+
+<body>
+
+    <div class="upload-box">
+
+        <h2>Upload a Video for DeepFake Analysis</h2>
+
+        <form action="/analyze" method="POST" enctype="multipart/form-data">
+
+            <div class="file-upload">
+                <label class="custom-file">
+                    Choose File
+                    <input type="file" id="fileInput" name="video" accept="video/*" required>
+                </label>
+
+                <div id="fileName">No file chosen</div>
+            </div>
+
+            <br><br>
+
+            <!-- MUST be type="submit" -->
+            <button id="analyzeBtn" type="submit">Analyze</button>
+
+        </form>
+
+        <a href="/" class="back">Back to Home</a>
+
+    </div>
+
+    <!-- JavaScript to update file name -->
+    <script>
+        document.getElementById("fileInput").addEventListener("change", function() {
+            let fileName = this.files.length > 0 ? this.files[0].name : "No file chosen";
+            document.getElementById("fileName").textContent = fileName;
+        });
+    </script>
+
+</body>
+</html>
+
+

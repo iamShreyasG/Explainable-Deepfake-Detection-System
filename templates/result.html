@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFake Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="results-container">
+        <h1 class="results-title">Analysis Complete!</h1>
+        <p class="results-subtitle">Atlas has analyzed your video</p>
+
+        <div class="results-grid">
+
+            <!-- ================= PREDICTION ================= -->
+            <div class="card prediction-card">
+                <h2 class="section-title">📄 Prediction</h2>
+                <div class="result-box">
+                    <span class="prediction-display {{ prediction | lower }}">
+                        {{ prediction | title }}
+                    </span>
+                    <div class="confidence-container">
+                        <div class="confidence-label">Confidence</div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill {{ prediction | lower }}"
+                                 style="width: {{ (confidence * 100) | round(1) }}%;">
+                            </div>
+                        </div>
+                        <div class="confidence-value">
+                            {{ (confidence * 100) | round(1) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= EXPLANATION ================= -->
+            <div class="card">
+                <h2 class="section-title">📘 Explanation</h2>
+                <textarea class="exp-box" readonly>{{ explanation }}</textarea>
+            </div>
+
+            <!-- ================= TEMPORAL ANALYSIS ================= -->
+            <div class="card temporal-card">
+                <h2 class="section-title">📊 Temporal Analysis</h2>
+                <p class="analytics-subtitle">Forgery probability across video timeline</p>
+                <div class="chart-wrapper">
+                    <canvas id="temporalChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot-forgery"></span> Forgery Probability
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-line-threshold"></span> Threshold (0.5)
+                    </span>
+                </div>
+            </div>
+
+            <!-- ================= AUDIO & VISUAL ANALYTICS ================= -->
+            <div class="card">
+                <h2 class="section-title">🧠 Audio &amp; Visual Analytics</h2>
+                <p class="analytics-subtitle">Anomaly scores across detection channels</p>
+                <div class="chart-wrapper chart-wrapper-bar">
+                    <canvas id="avChart"></canvas>
+                </div>
+            </div>
+
+            <!-- ================= FRAME INSPECTION ================= -->
+            <div class="card">
+                <h2 class="section-title">🎞 Frame Inspection</h2>
+                <p class="analytics-subtitle">Per-frame forgery confidence</p>
+                <div class="gauges-row" id="gaugesRow"></div>
+            </div>
+
+            <!-- ================= KEY FACTORS (SHAP) ================= -->
+            <div class="card">
+                <h2 class="section-title">🏷 Key Factors</h2>
+                <p class="analytics-subtitle">Most influential signals in this prediction</p>
+                <div class="shap-badges">
+                    {% if influential_summary %}
+                        {% for statement in influential_summary %}
+                            <span class="shap-pill" style="animation-delay:{{ loop.index0 * 70 }}ms">{{ statement }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="muted-text">No dominant contributing factors identified.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ================= GRADCAM ================= -->
+            <div class="card">
+                <h2 class="section-title">🔥 Grad-CAM Visualizations</h2>
+                <div class="image-row">
+                    {% if gradcams %}
+                        {% for img in gradcams %}
+                            <img src="{{ url_for('static', filename=img) }}" alt="Grad-CAM frame">
+                        {% endfor %}
+                    {% else %}
+                        <p class="muted-text">No visual heatmaps generated.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ================= AUDIO HEATMAP ================= -->
+            <div class="card">
+                <h2 class="section-title">🎧 Audio Heatmap</h2>
+                <div class="audio-heatmap-wrapper">
+                    {% if audio_heatmap %}
+                        <img src="{{ url_for('static', filename=audio_heatmap) }}">
+                    {% else %}
+                        <p class="muted-text">No audio heatmap available.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ================= VIDEO ================= -->
+            <div class="card video-card">
+                <h2 class="section-title">🎥 Video Used</h2>
+                <video controls>
+                    <source src="{{ video_preview }}" type="video/mp4">
+                    Your browser does not support video playback.
+                </video>
+            </div>
+
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/upload" class="btn primary-btn">Analyze Another Video</a>
+            <a href="/" class="btn secondary-btn">Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Jinja → JS data bridge -->
+    <script>
+        const TEMPORAL_PROBS  = {{ temporal_probs  | tojson | default('[]') }};
+        const TEMPORAL_RANGES = {{ temporal_ranges | tojson | default('[]') }};
+        const AV_SCORES = {
+            "Audio Anomaly":       {{ audio_anomaly   | default(0) }},
+            "Visual Artifact":     {{ visual_artifact | default(0) }},
+            "Lip Sync Error":      {{ lip_sync        | default(0) }},
+            "Lighting Inconsist.": {{ lighting        | default(0) }},
+            "Audio Noise":         {{ audio_noise     | default(0) }}
+        };
+        const FRAME_DATA = TEMPORAL_PROBS.length
+            ? TEMPORAL_PROBS.slice(0, 8).map((p, i) => ({
+                label: 'Frame ' + ((i + 1) * Math.ceil(TEMPORAL_PROBS.length / 8)),
+                value: parseFloat(p.toFixed(3))
+              }))
+            : [];
+    </script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
