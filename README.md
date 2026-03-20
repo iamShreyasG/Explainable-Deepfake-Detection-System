@@ -48,9 +48,12 @@ This project detects deepfake videos using both visual and audio information. It
 
 ## Model Weights
 
-If model files are not included in the repository, download them from: <your-drive-link>
+Due to size limitations, model weights are not included in this repository.
 
-Place the files inside the `saved_models/` directory.
+Download them from:
+https://drive.google.com/file/d/1nS6RZwhJjNbhXkyBGE3wEXxHlrP_gb5_/view?usp=sharing
+
+After downloading, place the file inside the `saved_models/` directory.
 
 ## Results
 
@@ -66,4 +69,4 @@ Place the files inside the `saved_models/` directory.
 
 ## Author
 
-Your Name
+Shreyas G
